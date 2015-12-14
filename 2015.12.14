@@ -1,0 +1,217 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+namespace shiping
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+           
+            string url = "C:\\Users\\Administrator\\Desktop\\CUHK\\archive\\0017.png";
+            this.pictureBox1.Image = Image.FromFile(url);
+           
+         
+        }
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string conn = "Server=(local);Integrated Security=True;DataBase=rlsb;"; //定义链接字符串
+            SqlConnection connection = new SqlConnection(conn);
+            connection.Open();
+            string[] SQL = { "CAVIAR4REID", "DPeS", "GRID", "iLID", "MIT", "PRID", "SARC3D", "TownCentre", "VIPeR", "CUHK" };
+            for (int i = 0; i < 10; i++)
+            {
+                string sql = "select ID, personalSex ,carrying from dbo.["+SQL[i]+"] where 1=1  ";
+                if (sex.Text.Trim() != "")
+                {
+                    sql += " And personalSex='" + fanhuisex(sex.Text.Trim()) + "'";
+
+                }
+                if (age.Text.Trim() != "")
+                {
+                    sql += " And personalAge='" + returnage(age .Text.Trim ())+ "'";
+
+                }
+                if (comboBox8.Text.Trim() != "")
+                {
+                    sql += " And carrying='" + xiedaiwupin(comboBox8.Text.Trim()) + "'";
+
+                }
+                if (comboBox2.Text.Trim() != "")
+                {
+                    sql += " And footweartype='" + footwear(comboBox2.Text.Trim()) + "'";
+
+                }
+                sql += "order by ID";
+
+                SqlDataAdapter sda = new SqlDataAdapter(sql, connection);
+
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+  
+                if (dt.Rows.Count > 0)
+                {
+       
+                    for (int j = 0; j < dt.Rows.Count; j++)
+                    {
+                        int newIndex = dataGridView1.Rows.Add();
+                        string url = "C:\\Users\\Administrator\\Desktop\\" + SQL[i] + "\\archive\\" + dt.Rows[j][0] + "";
+
+                        dataGridView1.Rows[newIndex].Cells["table_name"].Value = SQL[i];
+                        dataGridView1.Rows[newIndex].Cells["id"].Value = dt.Rows[j][0].ToString ();
+                        dataGridView1.Rows[newIndex].Cells["url"].Value = url;
+                           
+                  
+ 
+                    }
+ 
+                }
+ 
+ 
+            }
+          
+            connection.Close();
+
+        }
+
+        private string returnage()
+        {
+            throw new NotImplementedException();
+        }
+        
+    
+
+        public  string fanhuisex(string str)
+        {
+
+            if (str == "男人")
+            {
+                return "personalMale";
+
+            }
+            else
+            {
+                return "personalFemale";
+            }
+ 
+        }
+
+        public string returnage(string str)
+        {
+
+            if (str == "年龄<=15")
+            {
+                return "personalLess15";
+
+            }
+            if (str == " 15<年龄<=30")
+            {
+                return "personalLess30";
+
+            }
+            if (str == "30<年龄<=45")
+            {
+                return "personalLess45";
+
+            }
+            if (str == "45<年龄<=60")
+            {
+                return "personalLess60";
+
+            }
+            
+            else
+            {
+                return "personalLarger60";
+            }
+
+        }
+
+        public string xiedaiwupin(string str)
+        {
+            if (str =="背包")
+            {
+                return "carryingBackpack";
+            }
+            if (str =="邮差包、斜挎包、信差包")
+            {
+                return "carryingMessengerBag";
+            }
+            if (str =="手提箱")
+            {
+                return "carryingSuitcase";
+            }
+            if (str == "其他")
+            {
+                return "carryingOther";
+
+            }
+            else
+            {
+                return "carryingNothing";
+            }
+        }
+        public string footwear(string str)
+        {
+            if (str == "鞋子")
+            {
+                return "footwearShoes";
+            }
+            if (str == "运动鞋")
+            {
+                return "footwearSneaker";
+            }
+            if (str == "凉鞋")
+            {
+                return "footwearSandals";
+            }
+            if (str == "皮鞋")
+            {
+                return "footwearLeatherShoes";
+
+            }
+            if (str == "长筒靴")
+            {
+                return "footwearStocking";
+            }
+            else
+            {
+                return "footwearBoots";
+            }
+ 
+        }
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                textBox3 .Text  = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
+                textBox2.Text = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
+               // textBox4.Text = dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString();
+            }
+            string path = dataGridView1.Rows[dataGridView1.CurrentRow.Index].Cells[2].Value.ToString().Trim ();
+          
+            this.pictureBox3.Image = Image.FromFile(path);
+        }
+ 
+        }
+
+    }
+ 
+    
+    
+
+
+
+
+
